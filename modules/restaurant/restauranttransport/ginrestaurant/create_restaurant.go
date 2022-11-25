@@ -3,6 +3,7 @@ package ginrestaurant
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"simple-rest-api/common"
 	"simple-rest-api/component/component"
 	"simple-rest-api/modules/restaurant/restaurantbiz"
 	"simple-rest-api/modules/restaurant/restaurantmodel"
@@ -27,6 +28,6 @@ func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, data)
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
 	}
 }
