@@ -59,30 +59,7 @@ func runService(db *gorm.DB) error {
 			c.JSON(http.StatusOK, data)
 		})
 
-		restaurants.GET("", func(c *gin.Context) {
-			var data []restaurantmodel.Restaurant
-
-			type Filter struct {
-				CityId int `json:"city_id" form:"city_id"`
-			}
-			var filter Filter
-
-			c.ShouldBind(&filter)
-
-			newDb := db
-
-			if filter.CityId > 0 {
-				newDb = db.Where("city_id = ?", filter.CityId)
-			}
-
-			if err := newDb.Find(&data).Error; err != nil {
-				c.JSON(401, map[string]interface{}{
-					"error": err.Error(),
-				})
-				return
-			}
-			c.JSON(http.StatusOK, data)
-		})
+		restaurants.GET("", ginrestaurant.ListRestaurant(appCtx))
 
 		restaurants.PATCH("/:id", func(c *gin.Context) {
 			id, err := strconv.Atoi(c.Param("id"))

@@ -10,11 +10,18 @@ import (
 	"simple-rest-api/modules/restaurant/restaurantstorage"
 )
 
-func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
+func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var data restaurantmodel.RestaurantCreate
+		var filter restaurantmodel.Filter
+		if err := c.ShouldBind(&filter); err != nil {
+			c.JSON(401, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
 
-		if err := c.ShouldBind(&data); err != nil {
+		var paging common.Paging
+		if err := c.ShouldBind(&paging); err != nil {
 			c.JSON(401, gin.H{
 				"error": err.Error(),
 			})
@@ -22,15 +29,15 @@ func CreateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		}
 
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
-		biz := restaurantbiz.NewCreateRestaurantBiz(store)
+		biz := restaurantbiz.NewListRestaurantBiz(store)
 
-		if err := biz.CreateRestaurant(c.Request.Context(), &data); err != nil {
+		result, err := biz.ListRestaurant(c.Request.Context(), &filter, &paging)
+		if err != nil {
 			c.JSON(401, gin.H{
 				"error": err.Error(),
 			})
 			return
 		}
-
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(data))
+		c.JSON(http.StatusOK, common.SimpleSuccessResponse(result))
 	}
 }

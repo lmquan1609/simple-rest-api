@@ -9,7 +9,8 @@ import (
 func (s *sqlStore) ListDataByCondition(
 	ctx context.Context,
 	conditions map[string]interface{}, filter *restaurantmodel.Filter,
-	paging *common.Paging, moreKeys ...string) ([]restaurantmodel.Restaurant, error) {
+	paging *common.Paging, moreKeys ...string,
+) ([]restaurantmodel.Restaurant, error) {
 	var result []restaurantmodel.Restaurant
 	db := s.db
 
