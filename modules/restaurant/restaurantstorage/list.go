@@ -18,7 +18,7 @@ func (s *sqlStore) ListDataByCondition(
 		db = db.Preload(moreKeys[i])
 	}
 
-	db = db.Where(conditions)
+	db = db.Table(restaurantmodel.Restaurant{}.TableName()).Where(conditions)
 
 	if v := filter; v != nil {
 		if v.CityId > 0 {
@@ -30,7 +30,11 @@ func (s *sqlStore) ListDataByCondition(
 		return nil, err
 	}
 
-	if err := db.Find(&result).Error; err != nil {
+	if err := db.
+		Offset((paging.Page - 1) * paging.Limit).
+		Limit(paging.Limit).
+		Order("id desc").
+		Find(&result).Error; err != nil {
 		return nil, err
 	}
 

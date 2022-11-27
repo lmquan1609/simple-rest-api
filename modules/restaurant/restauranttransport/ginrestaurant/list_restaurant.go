@@ -28,6 +28,8 @@ func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			return
 		}
 
+		paging.Fulfill()
+
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
 		biz := restaurantbiz.NewListRestaurantBiz(store)
 
@@ -38,6 +40,6 @@ func ListRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 			})
 			return
 		}
-		c.JSON(http.StatusOK, common.SimpleSuccessResponse(result))
+		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, filter))
 	}
 }
