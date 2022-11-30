@@ -8,9 +8,7 @@ import (
 	"net/http"
 	"os"
 	"simple-rest-api/component/component"
-	"simple-rest-api/modules/restaurant/restaurantmodel"
 	"simple-rest-api/modules/restaurant/restauranttransport/ginrestaurant"
-	"strconv"
 )
 
 func main() {
@@ -46,28 +44,7 @@ func runService(db *gorm.DB) error {
 
 		restaurants.PATCH("/:id", ginrestaurant.UpdateRestaurant(appCtx))
 
-		restaurants.DELETE("/:id", func(c *gin.Context) {
-			id, err := strconv.Atoi(c.Param("id"))
-
-			if err != nil {
-				c.JSON(401, map[string]interface{}{
-					"error": err.Error(),
-				})
-				return
-			}
-
-			if err := db.Table(restaurantmodel.Restaurant{}.TableName()).
-				Where("id = ?", id).
-				Delete(nil).Error; err != nil {
-				c.JSON(401, map[string]interface{}{
-					"error": err.Error(),
-				})
-				return
-			}
-			c.JSON(http.StatusOK, map[string]interface{}{
-				"ok": 1,
-			})
-		})
+		restaurants.DELETE("/:id", ginrestaurant.DeleteRestaurant(appCtx))
 	}
 	return r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
