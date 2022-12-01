@@ -1,8 +1,18 @@
 package restaurantbiz
 
-import "context"
+import (
+	"context"
+	"errors"
+	"simple-rest-api/modules/restaurant/restaurantmodel"
+)
 
 type DeleteRestaurantStore interface {
+	FindDataByCondition(
+		ctx context.Context,
+		conditions map[string]interface{},
+		morekeys ...string,
+	) (*restaurantmodel.Restaurant, error)
+
 	SoftDeleteData(ctx context.Context, id int) error
 }
 
@@ -15,6 +25,19 @@ func NewDeleteRestaurantBiz(store DeleteRestaurantStore) *deleteRestaurantBiz {
 }
 
 func (biz *deleteRestaurantBiz) DeleteRestaurant(ctx context.Context, id int) error {
-	err := biz.store.SoftDeleteData(ctx, id)
-	return err
+	oldData, err := biz.store.FindDataByCondition(ctx, map[string]interface{}{"id": id})
+
+	if err != nil {
+		return err
+	}
+
+	if oldData.Status == 0 {
+		return errors.New("data deleted")
+	}
+
+	if err := biz.store.SoftDeleteData(ctx, id); err != nil {
+		return err
+	}
+
+	return nil
 }
