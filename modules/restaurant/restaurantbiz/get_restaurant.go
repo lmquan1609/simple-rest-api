@@ -27,7 +27,7 @@ func (biz *getRestaurantBiz) GetRestaurant(ctx context.Context, id int) (*restau
 	data, err := biz.store.FindDataByCondition(ctx, map[string]interface{}{"id": id})
 
 	if err != nil {
-		if err != common.RecordNotFound {
+		if err == common.RecordNotFound {
 			return nil, err
 		}
 		return nil, err
