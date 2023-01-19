@@ -2,6 +2,7 @@ package restaurantstorage
 
 import (
 	"context"
+	"simple-rest-api/common"
 	"simple-rest-api/modules/restaurant/restaurantmodel"
 )
 
@@ -14,7 +15,7 @@ func (s *sqlStore) SoftDeleteData(ctx context.Context, id int) error {
 	}).Error
 
 	if err != nil {
-		return err
+		return common.ErrDB(err)
 	}
 	return nil
 }
