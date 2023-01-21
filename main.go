@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"simple-rest-api/component/component"
+	"simple-rest-api/modules/restaurant/middleware"
 	"simple-rest-api/modules/restaurant/restauranttransport/ginrestaurant"
 )
 
@@ -25,7 +26,10 @@ func main() {
 }
 
 func runService(db *gorm.DB) error {
+	appCtx := component.NewAppContext(db)
 	r := gin.Default()
+	r.Use(middleware.Recover(appCtx))
+
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
@@ -33,7 +37,6 @@ func runService(db *gorm.DB) error {
 	})
 
 	//CRUD
-	appCtx := component.NewAppContext(db)
 	restaurants := r.Group("/restaurants")
 	{
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))
