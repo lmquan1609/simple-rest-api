@@ -10,6 +10,7 @@ import (
 	"simple-rest-api/component/component"
 	"simple-rest-api/modules/restaurant/middleware"
 	"simple-rest-api/modules/restaurant/restauranttransport/ginrestaurant"
+	"simple-rest-api/modules/upload/uploadtransport/ginupload"
 )
 
 func main() {
@@ -37,6 +38,8 @@ func runService(db *gorm.DB) error {
 	})
 
 	//CRUD
+	r.POST("/upload", ginupload.Upload(appCtx))
+
 	restaurants := r.Group("/restaurants")
 	{
 		restaurants.POST("", ginrestaurant.CreateRestaurant(appCtx))

@@ -43,3 +43,28 @@ func (j *Image) Value() (driver.Value, error) {
 	}
 	return json.Marshal(j)
 }
+
+type Images []Image
+
+func (j *Images) Scan(value interface{}) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New(fmt.Sprintf("Failed to unmarshal JSONB value: %s", value))
+	}
+
+	var img []Image
+	if err := json.Unmarshal(bytes, &img); err != nil {
+		return err
+	}
+
+	*j = img
+	return nil
+}
+
+// Value return json value, implement driver.Valuer interface
+func (j *Images) Value() (driver.Value, error) {
+	if j == nil {
+		return nil, nil
+	}
+	return json.Marshal(j)
+}
