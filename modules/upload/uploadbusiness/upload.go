@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"simple-rest-api/common"
 	"strings"
+	"time"
 )
 
 type CreateImageStorage interface {
@@ -36,5 +37,16 @@ func (biz *uploadBiz) Upload(ctx context.Context, data []byte, folder, fileName 
 	}
 
 	fileExt := filepath.Ext(fileName)
-	fileName = fmt.Sprintf()
+	fileName = fmt.Sprintf("%s%s", time.Now().Nanosecond(), fileExt) // 123123132.jpg
+
+	img, err := biz.provider.SaveFileUploaded(ctx, data, fmt.Sprintf("%s/%s", folder, fileName))
+
+	if err != nil {
+		return nil, uploadmodel.ErrCannotSaveFile(err)
+	}
+
+	img.Width = w
+	img.Height = h
+	img.CloudName = "s3" // should be set in provider
+	img.Extension = fileExt
 }
