@@ -9,7 +9,7 @@ import (
 
 func Upload(appCtx component.AppContext) func(*gin.Context) {
 	return func(c *gin.Context) {
-		db := appCtx.GetMainDBConnection()
+		// db := appCtx.GetMainDBConnection()
 
 		fileHeader, err := c.FormFile("file")
 
@@ -32,8 +32,8 @@ func Upload(appCtx component.AppContext) func(*gin.Context) {
 			panic(common.ErrInvalidRequest(err))
 		}
 
-		imgStore := uploadstorage.NewSQLStore(db)
-		biz := uploadbusiness.NewUploadBiz(appCtx.UploadProvider(), imgStore)
+		// imgStore := uploadstorage.NewSQLStore(db)
+		biz := uploadbusiness.NewUploadBiz(appCtx.UploadProvider(), nil)
 		img, err := biz.Upload(c.Request.Context(), dataBytes, folder, fileHeader.Filename)
 
 		if err != nil {
