@@ -2,6 +2,8 @@ package ginupload
 
 import (
 	"github.com/gin-gonic/gin"
+	_ "image/jpeg"
+	_ "image/png"
 	"simple-rest-api/common"
 	"simple-rest-api/component/component"
 	"simple-rest-api/modules/upload/uploadbusiness"
