@@ -42,6 +42,6 @@ func Upload(appCtx component.AppContext) func(*gin.Context) {
 			panic(err)
 		}
 
-		c.JSON(200, common.SimpleSuccessResponse(img.Id))
+		c.JSON(200, common.SimpleSuccessResponse(img))
 	}
 }
