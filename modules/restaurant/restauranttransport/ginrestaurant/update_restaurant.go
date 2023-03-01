@@ -7,12 +7,12 @@ import (
 	"simple-rest-api/modules/restaurant/restaurantbiz"
 	"simple-rest-api/modules/restaurant/restaurantmodel"
 	"simple-rest-api/modules/restaurant/restaurantstorage"
-	"strconv"
 )
 
 func UpdateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id, err := strconv.Atoi(c.Param("id"))
+		uid, err := common.FromBase58(c.Param("id"))
+		// id, err := strconv.Atoi(c.Param("id"))
 
 		if err != nil {
 			panic(common.ErrInvalidRequest(err))
@@ -27,7 +27,7 @@ func UpdateRestaurant(appCtx component.AppContext) gin.HandlerFunc {
 		store := restaurantstorage.NewSQLStore(appCtx.GetMainDBConnection())
 		biz := restaurantbiz.NewUpdateRestaurantBiz(store)
 
-		if err := biz.UpdateRestaurant(c.Request.Context(), id, &data); err != nil {
+		if err := biz.UpdateRestaurant(c.Request.Context(), int(uid.GetLocalID()), &data); err != nil {
 			panic(err)
 		}
 
